@@ -1,0 +1,6 @@
+/target
+.code
+.amc.toml
+Cargo.lock
+*.pth
+burn_models/

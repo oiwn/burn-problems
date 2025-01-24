@@ -1,0 +1,22 @@
+session_name: burn-problems
+shell_command_before: "export RUST_LOG=info"
+windows:
+  - window_name: code
+    focus: true
+    start-directory: ./
+    panes:
+      - shell_command:
+        - helix
+  - window_name: cmd
+    start-directory: ./
+    panes:
+      - shell_command:
+        - clear
+  - window_name: srv
+    start-directory: ./
+    panes:
+      - shell_command:
+        - clear
+  - window_name: notes
+    panes:
+        - emacs -nw notes.org
