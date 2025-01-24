@@ -1,8 +1,7 @@
 //! Features manupulations
-use serde::{self, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(crate = "self::serde")]
 pub struct RawFeatures {
     pub feature1: usize,
     pub feature2: usize,
