@@ -56,12 +56,14 @@ pub fn model_train() {
     use crate::training::{train, TrainingConfig};
     use burn::optim::AdamConfig;
 
-    type Backend = burn::backend::Wgpu;
+    type Backend = burn::backend::NdArray;
+    // type Backend = burn::backend::Wgpu;
     type AutoDiffBackend = burn::backend::Autodiff<Backend>;
 
     println!("Loading things to train DemoModel");
 
-    let device = burn::backend::wgpu::WgpuDevice::default();
+    // let device = burn::backend::wgpu::WgpuDevice::default();
+    let device = burn::backend::ndarray::NdArrayDevice::default();
     let (train_data, test_data) = load_training_data().unwrap();
 
     for item in train_data[0..5].iter() {
