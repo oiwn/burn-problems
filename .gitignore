@@ -3,4 +3,10 @@
 .amc.toml
 Cargo.lock
 *.pth
-burn_models/
+*.mpk
+config.json
+*.log
+data/burn_models/valid/
+data/burn_models/train/
+data/burn_models/checkpoint/
+!data/burn_models/.gitkeep
