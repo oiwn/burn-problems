@@ -1,5 +1,7 @@
 /target
+.venv/
 .code
+code.txt
 .amc.toml
 Cargo.lock
 *.pth

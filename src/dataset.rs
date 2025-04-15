@@ -1,6 +1,6 @@
 use burn::{
     data::{dataloader::batcher::Batcher, dataset::Dataset},
-    tensor::{backend::Backend, Int, Tensor, TensorData},
+    tensor::{Int, Tensor, TensorData, backend::Backend},
 };
 
 use crate::prepared::PreparedFeatures;
@@ -58,8 +58,8 @@ impl<B: Backend> DemoBatcher<B> {
     }
 }
 
-impl<B: Backend> Batcher<PreparedFeatures, DemoBatch<B>> for DemoBatcher<B> {
-    fn batch(&self, items: Vec<PreparedFeatures>) -> DemoBatch<B> {
+impl<B: Backend> Batcher<B, PreparedFeatures, DemoBatch<B>> for DemoBatcher<B> {
+    fn batch(&self, items: Vec<PreparedFeatures>, _device: &B::Device) -> DemoBatch<B> {
         let batch_size = items.len();
         let num_features = items[0].features.len();
 
@@ -151,7 +151,7 @@ mod tests {
         ];
 
         // Batch the data
-        let batch = batcher.batch(batch_items);
+        let batch = batcher.batch(batch_items, &device);
 
         // Print shapes and data
         println!("Features tensor shape: {:?}", batch.features.dims());
@@ -183,7 +183,7 @@ mod tests {
             .collect::<Vec<_>>();
 
         // Batch the data
-        let batch = batcher.batch(batch_items);
+        let batch = batcher.batch(batch_items, &device);
 
         // Check tensor shapes
         assert_eq!(

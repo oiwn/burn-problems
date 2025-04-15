@@ -1,6 +1,6 @@
 use crate::data::RawFeatures;
 use crate::scaler::StandardScaler;
-use rand::{seq::SliceRandom, thread_rng};
+use rand::{rng, seq::SliceRandom};
 
 #[derive(Debug, Clone)]
 pub struct PreparedFeatures {
@@ -28,7 +28,7 @@ impl PreparedFeatures {
 
     /// Split dataset into train and test parts
     pub fn split_dataset(data: Vec<Self>, train_ratio: f32) -> (Vec<Self>, Vec<Self>) {
-        let mut rng = thread_rng();
+        let mut rng = rng();
         let mut data = data; // make the vector mutable
 
         // Shuffle the dataset
