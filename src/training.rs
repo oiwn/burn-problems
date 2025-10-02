@@ -31,7 +31,7 @@ pub struct TrainingConfig {
     pub num_workers: usize,
     #[config(default = 42)]
     pub seed: u64,
-    #[config(default = 0.0001)]
+    #[config(default = 0.001)]
     pub learning_rate: f64,
 }
 
@@ -46,18 +46,17 @@ impl<B: Backend> DemoClassifierModel<B> {
         features: Tensor<B, 2>,
         targets: Tensor<B, 1, Int>,
     ) -> ClassificationOutput<B> {
-        let output = self.forward(features); // [batch_size, 1]
+        let logits = self.forward(features); // [batch_size, 1] - logits
         let loss = BinaryCrossEntropyLossConfig::new()
-            .init(&output.device())
-            .forward(output.clone().squeeze(), targets.clone());
+            .with_logits(true) // Model outputs logits, not probabilities
+            .init(&logits.device())
+            .forward(logits.clone().squeeze(), targets.clone());
 
-        // let output = self.forward(features);
-        // let batch_size = output.dims()[0];
-        // let loss = BinaryCrossEntropyLossConfig::new()
-        //     .init(&output.device())
-        //     .forward(output.clone(), targets.clone().reshape([batch_size, 1]));
+        // Convert logits to probabilities for accuracy metric
+        // ClassificationOutput expects predictions in [0, 1] range for binary classification
+        let predictions = burn::nn::Sigmoid::new().forward(logits);
 
-        ClassificationOutput::new(loss, output, targets)
+        ClassificationOutput::new(loss, predictions, targets)
     }
 }
 

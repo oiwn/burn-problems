@@ -57,9 +57,14 @@ impl<B: Backend> DemoClassifierModel<B> {
         let x = self.hidden_layer1.forward(x);
         let x = self.activation.forward(x);
 
-        // Output layer with Sigmoid for binary classification
-        let x = self.output_layer.forward(x);
-        self.sigmoid.forward(x)
+        // Output layer - return logits (no sigmoid, BCE loss will handle it)
+        self.output_layer.forward(x)
+    }
+
+    /// Forward pass with sigmoid for inference
+    pub fn forward_inference(&self, x: Tensor<B, 2>) -> Tensor<B, 2> {
+        let logits = self.forward(x);
+        self.sigmoid.forward(logits)
     }
 }
 
