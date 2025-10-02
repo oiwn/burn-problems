@@ -19,7 +19,7 @@ use burn::{
     },
 };
 
-#[derive(Config)]
+#[derive(Config, Debug)]
 pub struct TrainingConfig {
     pub model: DemoClassifierModelConfig,
     pub optimizer: AdamConfig,
@@ -49,7 +49,7 @@ impl<B: Backend> DemoClassifierModel<B> {
         let output = self.forward(features); // [batch_size, 1]
         let loss = BinaryCrossEntropyLossConfig::new()
             .init(&output.device())
-            .forward(output.clone().squeeze(1), targets.clone());
+            .forward(output.clone().squeeze(), targets.clone());
 
         // let output = self.forward(features);
         // let batch_size = output.dims()[0];
@@ -90,7 +90,7 @@ pub fn train<B: AutodiffBackend>(
         .expect("Config should be saved successfully");
 
     // Set random seed
-    B::seed(config.seed);
+    B::seed(&device, config.seed);
 
     // Create batchers for train and validation
     let batcher_train = DemoBatcher::<B>::new(device.clone());
@@ -128,7 +128,6 @@ pub fn train<B: AutodiffBackend>(
         .metric_train_numeric(LossMetric::new())
         .metric_valid_numeric(LossMetric::new())
         .with_file_checkpointer(CompactRecorder::new())
-        .devices(vec![device.clone()])
         .num_epochs(config.num_epochs)
         .summary()
         .build(model, optimizer, config.learning_rate);
@@ -138,6 +137,7 @@ pub fn train<B: AutodiffBackend>(
 
     // Save trained model
     model_trained
+        .model
         .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
         .expect("Trained model should be saved successfully");
 }
